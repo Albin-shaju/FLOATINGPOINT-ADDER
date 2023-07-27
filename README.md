@@ -1,2 +1,2 @@
-# FLOATINGPOINT_ADDER
+# FLOATINGPOINT-ADDER
 to create floating point adder
