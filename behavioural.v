@@ -25,8 +25,7 @@ module FloatingPointAdder(
     output reg [31:0] result
 );
 
-    // Internal signals for intermediate calculations
-    reg [31:0] result_final;  
+    // Internal signals for intermediate calculations  
     reg [22:0] mantissa_a;       
     reg [22:0] mantissa_b;      
     reg [7:0] exponent_a;        
@@ -36,9 +35,8 @@ module FloatingPointAdder(
     reg [23:0] mux1out;  // Output of the right shifter unit
     reg [23:0] mux2out;  // Output of the adder top unit
     reg [23:0] outshift; // Output of the right shifter
-    reg [4:0] shiftdiff; // Difference in exponents for right shifting
-    reg [23:0] adderout; // Output of the 24-bit adder
-    reg cout;            // Carry output of the 24-bit adder
+    wire [23:0] adderout; // Output of the 24-bit adder
+    wire cout;            // Carry output of the 24-bit adder
     reg [7:0] maxexp;    // Maximum exponent for final exponent selection
     reg [7:0] exponent_final;  // Final exponent for the output
     reg [4:0] select;    // Selection lines for the final shifting
@@ -85,7 +83,7 @@ module FloatingPointAdder(
     end
 
     // 24-bit adder (can be implemented as a single line, no behavioral needed)
-    Adder_24Bit A1(mux2out, outshift, adderout, cout);
+    Adder_24Bit s0(mux2out, outshift, adderout, cout);
 
     // Determining the maximum exponent to be used as the final exponent
     always @*
