@@ -22,11 +22,11 @@
 module FloatingPointAdder(
     input [31:0] A,
     input [31:0] B,
-    output [31:0] result
+    output reg [31:0] result
 );
 
     // Internal signals for intermediate calculations
-    reg [31:0] result;  
+    reg [31:0] result_final;  
     reg [22:0] mantissa_a;       
     reg [22:0] mantissa_b;      
     reg [7:0] exponent_a;        
@@ -56,7 +56,7 @@ module FloatingPointAdder(
     // Calculation of the magnitude of the subtraction of the exponents
     always @*
     begin
-        Modulo = (exponent_a > exponent_b) ? (exponent_a - exponent_b) : (exponent_b - exponetn_a;
+        Modulo = (exponent_a > exponent_b) ? (exponent_a - exponent_b) : (exponent_b - exponent_a);
         Borrow = (exponent_a < exponent_b);
     end
 
@@ -73,9 +73,9 @@ module FloatingPointAdder(
     always @*
     begin
         if (Borrow)
-            mux2out = matnissa_b; // Add 1 to MA when Borrow is 1
+            mux2out = mantissa_b; // Add 1 to MA when Borrow is 1
         else
-            mux2out = mantissa_a // Add MA and MB when Borrow is 0
+            mux2out = mantissa_a;// Add MA and MB when Borrow is 0
     end
 
     // Performing right shifting based on the result of the exponent subtraction
@@ -93,16 +93,16 @@ module FloatingPointAdder(
         if (Borrow)
             maxexp = exponent_b;
         else
-            maxexp = exponetn_a;
+            maxexp = exponent_a;
     end
 
     // Calculating the exponent of the output based on the carry operation of the 24-bit adder
     always @*
     begin
         if (cout == 0)
-        expfinal = maxexp;
+            exponent_final = maxexp;
         else 
-            expfinal = maxexp +1;
+            exponent_final = maxexp +1;
     end
 
  
@@ -115,11 +115,10 @@ module FloatingPointAdder(
     // Combining the sign, exponent, and mantissa to form the output
     always @*
     begin
-        Out[31] = 0;         
-        Out[30:23] = expfinal; 
-        Out[22:0] = finalM;  
+        result[31] = 0;         
+        result[30:23] = exponent_final; 
+        result[22:0] = finalM;  
     end
 
 endmodule
-
 
