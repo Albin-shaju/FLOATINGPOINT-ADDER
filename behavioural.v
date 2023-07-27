@@ -22,15 +22,15 @@
 module FloatingPointAdder(
     input [31:0] A,
     input [31:0] B,
-    output [31:0] Out
+    output [31:0] result
 );
 
     // Internal signals for intermediate calculations
-    reg [31:0] Out;      // Output register to hold the final result
-    reg [22:0] MA;       // Mantissa of A
-    reg [22:0] MB;       // Mantissa of B
-    reg [7:0] EA;        // Exponent of A
-    reg [7:0] EB;        // Exponent of B
+    reg [31:0] result;  
+    reg [22:0] mantissa_a;       
+    reg [22:0] mantissa_b;      
+    reg [7:0] exponent_a;        
+    reg [7:0] exponent_b;       
     reg [7:0] Modulo;    // Magnitude of the subtraction of exponents
     reg Borrow;          // Borrow flag for exponent subtraction
     reg [23:0] mux1out;  // Output of the right shifter unit
@@ -40,42 +40,42 @@ module FloatingPointAdder(
     reg [23:0] adderout; // Output of the 24-bit adder
     reg cout;            // Carry output of the 24-bit adder
     reg [7:0] maxexp;    // Maximum exponent for final exponent selection
-    reg [7:0] expfinal;  // Final exponent for the output
+    reg [7:0] exponent_final;  // Final exponent for the output
     reg [4:0] select;    // Selection lines for the final shifting
     reg [23:0] finalM;   // Final mantissa for the output
 
     // Extracting mantissa and exponent from the inputs
     always @*
     begin
-        MA = A[22:0];
-        MB = B[22:0];
-        EA = A[30:23];
-        EB = B[30:23];
+        mantissa_a = A[22:0];
+        mantissa_b = B[22:0];
+        exponent_a = A[30:23];
+        exponent_b = B[30:23];
     end
 
     // Calculation of the magnitude of the subtraction of the exponents
     always @*
     begin
-        Modulo = (EA > EB) ? (EA - EB) : (EB - EA);
-        Borrow = (EA < EB);
+        Modulo = (exponent_a > exponent_b) ? (exponent_a - exponent_b) : (exponent_b - exponetn_a;
+        Borrow = (exponent_a < exponent_b);
     end
 
     // Selecting the input with the lower exponent value for the right shifter unit
     always @*
     begin
         if (Borrow)
-            mux1out = MB >> 1; // Right shift MB by 1 bit when Borrow is 1
+            mux1out = mantissa_a; // Right shift MB by 1 bit when Borrow is 1
         else
-            mux1out = MB;      // Pass MB unchanged when Borrow is 0
+            mux1out = mantissa_b;      // Pass MB unchanged when Borrow is 0
     end
 
     // Performing 24-bit addition
     always @*
     begin
         if (Borrow)
-            mux2out = MA + 1; // Add 1 to MA when Borrow is 1
+            mux2out = matnissa_b; // Add 1 to MA when Borrow is 1
         else
-            mux2out = MA + MB; // Add MA and MB when Borrow is 0
+            mux2out = mantissa_a // Add MA and MB when Borrow is 0
     end
 
     // Performing right shifting based on the result of the exponent subtraction
@@ -91,36 +91,36 @@ module FloatingPointAdder(
     always @*
     begin
         if (Borrow)
-            maxexp = EB;
+            maxexp = exponent_b;
         else
-            maxexp = EA;
+            maxexp = exponetn_a;
     end
 
     // Calculating the exponent of the output based on the carry operation of the 24-bit adder
     always @*
     begin
-        expfinal = maxexp + cout;
+        if (cout == 0)
+        expfinal = maxexp;
+        else 
+            expfinal = maxexp +1;
     end
 
-    // Calculating the selection lines for the final shifting operation
-    always @*
-    begin
-        select[4:1] = 4'b0000;
-        select[0] = cout;
-    end
-
+ 
     // Performing the final shifting
     always @*
     begin
-        finalM = adderout >> select;
+        if(cout == 1)
+            finalM = adderout >> select;
+        else
+            finalM = adderout;
     end
 
     // Combining the sign, exponent, and mantissa to form the output
     always @*
     begin
-        Out[31] = 0;          // Set sign bit to 0 (positive number)
-        Out[30:23] = expfinal; // Assign the final exponent
-        Out[22:0] = finalM;   // Assign the final mantissa
+        Out[31] = 0;         
+        Out[30:23] = expfinal; 
+        Out[22:0] = finalM;  
     end
 
 endmodule
