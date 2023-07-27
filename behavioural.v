@@ -109,10 +109,7 @@ module FloatingPointAdder(
     // Performing the final shifting
     always @*
     begin
-        if(cout == 1)
-            finalM = adderout >> select;
-        else
-            finalM = adderout;
+        finalM = (cout == 1) ? adderout >> 1 : adderout;
     end
 
     // Combining the sign, exponent, and mantissa to form the output
