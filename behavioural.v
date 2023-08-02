@@ -85,7 +85,7 @@ module FloatingPointAdder(
     always @*
     begin
     // 24-bit adder (can be implemented as a single line, no behavioral needed)
-        if(a[31] == 0 && a[32] == 0)
+        if(a[31] == 0 && b[31] == 0)
             Adder_24Bit s0(mux2out, outshift, adderout, cout);
          else
              sub_24Bit s1(mux2out, outshift, adderout, cout);
