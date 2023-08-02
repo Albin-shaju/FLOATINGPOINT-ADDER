@@ -82,8 +82,15 @@ module FloatingPointAdder(
         outshift = mux1out >> Modulo[4:0];
     end
 
+    always @*
+    begin
     // 24-bit adder (can be implemented as a single line, no behavioral needed)
-    Adder_24Bit s0(mux2out, outshift, adderout, cout);
+        if(a[31] == 0 && a[32] == 0)
+            Adder_24Bit s0(mux2out, outshift, adderout, cout);
+         else
+             sub_24Bit s1(mux2out, outshift, adderout, cout);
+        end
+
 
     // Determining the maximum exponent to be used as the final exponent
     always @*
